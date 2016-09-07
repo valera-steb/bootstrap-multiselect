@@ -3,3 +3,4 @@
 .idea/
 *.iml
 nbproject/
+bower_components/

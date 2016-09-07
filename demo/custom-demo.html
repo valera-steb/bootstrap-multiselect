@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>custom-styles-demo</title>
+
+    <link href="../bower_components/bootstrap/dist/css/bootstrap.css" type="text/css" rel="stylesheet">
+    <link href="../bower_components/bootstrap/dist/css/bootstrap-theme.css" type="text/css" rel="stylesheet">
+    <link href="../dist/css/bootstrap-multiselect.css" type="text/css"
+          rel="stylesheet">
+
+    <link href="../bower_components/font-awesome/css/font-awesome.css" type="text/css" rel="stylesheet">
+    <link href="../bower_components/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" type="text/css"
+          rel="stylesheet">
+
+    <script src="../bower_components/jquery/dist/jquery.js"></script>
+    <script src="../bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="../dist/js/bootstrap-multiselect.js"></script>
+    <!--<script src="../bower_components/bootstrap-multiselect/dist/js/bootstrap-multiselect-collapsible-groups.js"></script>-->
+
+    <!--<script src="custom-bootstrap-multiselect.js"></script>-->
+</head>
+<body>
+
+<div class="container">
+    <hr/>
+
+    <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10">
+            Стандартные
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-4">
+            <select id="example-getting-started" multiple="multiple">
+                <option value="cheese">Cheese</option>
+                <option value="tomatoes">Tomatoes</option>
+                <option value="mozarella">Mozzarella</option>
+                <option value="mushrooms">Mushrooms</option>
+                <option value="pepperoni">Pepperoni</option>
+                <option value="onions">Onions</option>
+            </select>
+        </div>
+
+        <div class="col-sm-8">
+            selected: <span id="getting-started-selected"></span>
+        </div>
+
+        <script>
+            $(function () {
+                $('#example-getting-started').multiselect({
+                    onChange: function (option, checked, select) {
+                        var vals = $.map(
+                                this.$select.children(':selected'),
+                                function (el) {
+                                    return $(el).val()
+                                });
+                        $('#getting-started-selected').text(vals.join(", "));
+                    }
+                });
+            });
+        </script>
+    </div>
+
+    <hr/>
+
+    <div class="row">
+        <div class="col-sm-4">
+            <select id="example-enableCollapsibleOptGroups" multiple="multiple">
+                <optgroup label="Group 1">
+                    <option value="1-1" disabled="">Option 1.1</option>
+                    <option value="1-2" selected="selected">Option 1.2</option>
+                    <option value="1-3" selected="selected">Option 1.3</option>
+                </optgroup>
+                <optgroup label="Group 2">
+                    <option value="2-1">Option 2.1</option>
+                    <option value="2-2">Option 2.2</option>
+                    <option value="2-3">Option 2.3</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="col-sm-8">
+            selected: <span id="enableCollapsibleOptGroups-selected"></span>
+        </div>
+
+        <script>
+            $(function () {
+                var onSelect = function (option, checked, select) {
+                    var vals = $.map(
+                            this.$select.find(':selected'),
+                            function (el) {
+                                return $(el).val()
+                            });
+                    $('#enableCollapsibleOptGroups-selected').text(vals.join(", "));
+                };
+
+                function timed() {
+                    setTimeout($.proxy(onSelect, this));
+                };
+
+                $('#example-enableCollapsibleOptGroups').multiselect({
+                    numberDisplayed: 0,
+                    enableCollapsibleOptGroups: true,
+                    enableClickableOptGroups: true,
+                    includeSelectAllOption: true,
+
+                    onChange: onSelect,
+                    onSelectAll: onSelect,
+                    onDeselectAll: onSelect
+                });
+            })
+        </script>
+    </div>
+
+
+    <hr/>
+
+    <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-10">
+            С модифицированными конструкторами
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-4" id="plain-demo">
+            <select multiple="multiple">
+                <option value="cheese">Cheese</option>
+                <option value="tomatoes">Tomatoes</option>
+                <option value="mozarella">Mozzarella</option>
+                <option value="mushrooms">Mushrooms</option>
+                <option value="pepperoni">Pepperoni</option>
+                <option value="onions">Onions</option>
+            </select>
+        </div>
+
+        <div class="col-sm-8">
+            selected: <span id="plain-demo-selected"></span>
+        </div>
+
+        <script>
+            $(function () {
+                var onSelect = function (option, checked, select) {
+                    var vals = $.map(
+                            this.$select.children(':selected'),
+                            function (el) {
+                                return $(el).val()
+                            });
+                    $('#plain-demo-selected').text(vals.join(", "));
+                };
+
+                $('#plain-demo select').multiselect({
+                    modifyed: true,
+
+                    onChange: onSelect,
+                    onSelectAll: onSelect,
+                    onDeselectAll: onSelect,
+
+                    numberDisplayed: 0,
+                    maxHeight: 300,
+
+                    enableCollapsibleOptGroups: false,
+                    enableClickableOptGroups: false,
+
+                    templates: {
+                        li: '' +
+                        '<li><a tabindex="0"><div class="checkbox">' +
+                        '    <input id="checkbox-{checkboxId}" type="checkbox">' +
+                        '    <label for="checkbox-{checkboxId}"></label>' +
+                        '</div></a></li>'
+                    },
+
+                    includeSelectAllOption: true,
+                    includeSelectAllDivider: true,
+
+                    deselectAllText: 'Deselect All',
+
+                    optionCreateLi: (function () {
+                        var
+                                guid = Math.random() * 1000,
+                                id = 0;
+                        return function (liTemplate) {
+                            id++;
+                            var template = liTemplate.replace(/\{checkboxId\}/g, guid + '-' + id);
+                            return $(template);
+                        }
+                    }()),
+
+                    optionGetCheckbox: function ($li, $label) {
+                        return $('input', $li);
+                    }
+                });
+            });
+        </script>
+    </div>
+
+    <hr/>
+
+    <div class="row">
+        <div class="col-sm-4">
+            <select id="collapsible-demo" multiple="multiple">
+                <optgroup label="Group 1">
+                    <option value="1-1" disabled="">Option 1.1</option>
+                    <option value="1-2" selected="selected">Option 1.2</option>
+                    <option value="1-3" selected="selected">Option 1.3</option>
+                </optgroup>
+                <optgroup label="Group 2">
+                    <option value="2-1">Option 2.1</option>
+                    <option value="2-2" selected="selected">Option 2.2</option>
+                    <option value="2-3">Option 2.3</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="col-sm-8">
+            selected: <span id="collapsible-demo-selected"></span>
+        </div>
+
+        <script>
+            $(function () {
+                $('#collapsible-demo').multiselect({
+                    numberDisplayed: 0,
+                    enableCollapsibleOptGroups: true,
+                    enableClickableOptGroups: true,
+                    onChange: function (option, checked, select) {
+                        var vals = $.map(
+                                this.$select.children().children(':selected'),
+                                function (el) {
+                                    return $(el).val()
+                                });
+                        $('#collapsible-demo-selected').text(vals.join(", "));
+                    },
+                    templates: {
+                        li: '' +
+                        '<li><a tabindex="0"><div class="checkbox">' +
+                        '    <input id="checkbox-{checkboxId}" type="checkbox">' +
+                        '    <label for="checkbox-{checkboxId}"></label>' +
+                        '</div></a></li>',
+                        liGroup:'' +
+                        '<li class="multiselect-item multiselect-group"><a href="javascript:void(0);">' +
+                        '<div class="checkbox" style="display: inline-block;">' +
+                        '    <input id="checkbox-{checkboxId}" type="checkbox">' +
+                        '    <label for="checkbox-{checkboxId}"><b></b></label>' +
+                        '</div></a></li>'
+                    },
+                    optionCreateLi: (function () {
+                        var
+                                guid = Math.random() * 1000,
+                                id = 0;
+                        return function (liTemplate) {
+                            id++;
+                            var template = liTemplate.replace(/\{checkboxId\}/g, guid + '-' + id);
+                            return $(template);
+                        }
+                    }()),
+
+                    optionGetCheckbox: function ($li, $label) {
+                        return $('input', $li);
+                    },
+
+                    onOptGroupState: function ($li, checked, active) {
+                        var $checkbox = $('input', $li);
+                        $checkbox.prop('checked', checked);
+                        $checkbox[0].indeterminate = active;
+                    }
+                });
+            })
+        </script>
+    </div>
+</div>
+
+</body>
+</html>

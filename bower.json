@@ -18,7 +18,9 @@
   ],
   "dependencies": {
     "jquery": ">= 1.11.0",
-    "bootstrap": ">= 2.3.2"
+    "bootstrap": ">= 2.3.2",
+    "awesome-bootstrap-checkbox": "^0.3.7",
+    "font-awesome": "^4.6.3"
   },
   "ignore": [
     "docs/.*",
